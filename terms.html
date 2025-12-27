@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Use & Disclaimer - Glimpse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #6b7280 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 40px;
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .back-link:hover {
+            opacity: 0.7;
+        }
+
+        .warning-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 48px;
+            backdrop-filter: blur(20px);
+        }
+
+        .warning-box h2 {
+            color: #ef4444;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .warning-box p {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .warning-box .critical {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ef4444;
+            margin-top: 20px;
+        }
+
+        .section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            backdrop-filter: blur(20px);
+        }
+
+        .section h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+        }
+
+        .section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .section p {
+            font-size: 15px;
+            margin-bottom: 16px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .section ul {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0;
+        }
+
+        .section li {
+            font-size: 15px;
+            margin-bottom: 12px;
+            padding-left: 28px;
+            position: relative;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .section li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .section .danger-list li:before {
+            color: #ef4444;
+        }
+
+        .highlight {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid #3b82f6;
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .highlight p {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .danger-highlight {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid #ef4444;
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .danger-highlight p {
+            margin: 0;
+            font-weight: 500;
+            color: #ef4444;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .footer a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .footer a:hover {
+            opacity: 0.7;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 16px 48px;
+            background: #ffffff;
+            color: #000000;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-top: 24px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(255,255,255,0.15);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            .logo {
+                font-size: 36px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .warning-box {
+                padding: 24px;
+            }
+
+            .warning-box h2 {
+                font-size: 20px;
+            }
+
+            .warning-box p {
+                font-size: 14px;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .section h2 {
+                font-size: 20px;
+            }
+
+            .section h3 {
+                font-size: 16px;
+            }
+
+            .section p,
+            .section li {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Glimpse</div>
+            <div class="subtitle">Terms of Use & Legal Disclaimer</div>
+        </div>
+
+        <a href="/" class="back-link">← Back to Glimpse</a>
+
+        <div class="warning-box">
+            <h2>READ THIS CAREFULLY BEFORE USING GLIMPSE</h2>
+            <p>By accessing or using Glimpse, you acknowledge that you have read, understood, and agree to be bound by these terms. If you do not agree, you must immediately stop using this service.</p>
+            <p class="critical">YOU USE THIS SERVICE ENTIRELY AT YOUR OWN RISK. THE DEVELOPER ASSUMES NO RESPONSIBILITY FOR ANYTHING THAT HAPPENS WHILE YOU USE THIS PLATFORM.</p>
+        </div>
+
+        <div class="section">
+            <h2>1. Age Requirement</h2>
+            <div class="danger-highlight">
+                <p>YOU MUST BE 18 YEARS OF AGE OR OLDER TO USE THIS SERVICE.</p>
+            </div>
+            <p>This platform is strictly intended for adults. By using Glimpse, you confirm that:</p>
+            <ul>
+                <li>You are at least 18 years old</li>
+                <li>You are legally allowed to access adult-oriented services in your jurisdiction</li>
+                <li>You understand that users under 18 are prohibited from using this service</li>
+            </ul>
+            <p><strong>Important:</strong> There is no age verification system. You are responsible for ensuring you meet the age requirement. Parents and guardians are responsible for monitoring what minors access on the internet.</p>
+        </div>
+
+        <div class="section">
+            <h2>2. What This Service Does</h2>
+            <p>Glimpse is a random video chat platform that connects you with strangers from around the world through peer-to-peer video, audio, and text communication.</p>
+            <h3>You Will Be Connected With:</h3>
+            <ul class="danger-list">
+                <li>Random strangers you have never met</li>
+                <li>People from any country, culture, or background</li>
+                <li>Users whose identity, age, and intentions are completely unknown</li>
+                <li>Individuals who may behave inappropriately, offensively, or illegally</li>
+            </ul>
+            <div class="highlight">
+                <p>The developer has NO CONTROL over who you connect with, what they say, what they do, or how they behave.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>3. Risks You Accept</h2>
+            <p>By using Glimpse, you acknowledge and accept the following risks:</p>
+            
+            <h3>Content Risks:</h3>
+            <ul class="danger-list">
+                <li>You may be exposed to nudity, sexual content, or pornographic material</li>
+                <li>You may encounter violence, gore, or disturbing imagery</li>
+                <li>You may hear offensive language, hate speech, or discriminatory remarks</li>
+                <li>You may witness illegal activities being performed on camera</li>
+                <li>Users may display weapons, drugs, or other illegal items</li>
+            </ul>
+
+            <h3>Behavioral Risks:</h3>
+            <ul class="danger-list">
+                <li>Users may harass, threaten, intimidate, or abuse you verbally</li>
+                <li>Users may make unwanted sexual advances or propositions</li>
+                <li>Users may attempt to scam, manipulate, or defraud you</li>
+                <li>Users may lie about their identity, age, gender, or location</li>
+                <li>Users may have predatory or malicious intentions</li>
+            </ul>
+
+            <h3>Privacy Risks:</h3>
+            <ul class="danger-list">
+                <li>Other users may record your video without your knowledge or consent</li>
+                <li>Other users may screenshot or capture your image</li>
+                <li>Other users may save and distribute your messages</li>
+                <li>Your video, audio, or text may be shared publicly without your permission</li>
+                <li>Once recorded, you have NO CONTROL over how your content is used</li>
+            </ul>
+
+            <h3>Psychological Risks:</h3>
+            <ul class="danger-list">
+                <li>Interactions may cause emotional distress, anxiety, or trauma</li>
+                <li>You may encounter triggering or disturbing content</li>
+                <li>Negative experiences may affect your mental health</li>
+            </ul>
+
+            <div class="danger-highlight">
+                <p>THESE RISKS ARE REAL AND COMMON. THE DEVELOPER IS NOT RESPONSIBLE IF YOU EXPERIENCE ANY OF THESE SITUATIONS.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>4. Your Responsibilities</h2>
+            <p>You are solely and completely responsible for:</p>
+            <ul>
+                <li>Your own safety, security, and well-being while using this service</li>
+                <li>Everything you say, show on camera, or type in chat</li>
+                <li>Your behavior and conduct during video calls</li>
+                <li>Protecting your personal information and privacy</li>
+                <li>Any consequences that result from your use of this platform</li>
+                <li>Following all applicable laws in your jurisdiction</li>
+                <li>Leaving immediately if you encounter illegal or disturbing content</li>
+            </ul>
+
+            <h3>Safety Guidelines (Your Responsibility to Follow):</h3>
+            <ul>
+                <li>Never share your full name, address, phone number, email, or social media accounts</li>
+                <li>Never show identifying documents, locations, or items on camera</li>
+                <li>Never agree to meet strangers from this platform in person</li>
+                <li>Use the "Next" button immediately if you feel uncomfortable</li>
+                <li>Assume everything you do can and will be recorded</li>
+                <li>End the chat immediately if you see illegal content</li>
+                <li>Report serious crimes to law enforcement, not to the developer</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>5. Prohibited Activities</h2>
+            <p>While using Glimpse, you may NOT:</p>
+            <ul class="danger-list">
+                <li>Engage in or display any illegal activities</li>
+                <li>Display or distribute child sexual abuse material (this is a serious crime)</li>
+                <li>Harass, threaten, stalk, or abuse other users</li>
+                <li>Display nudity or engage in sexual acts if you are under 18</li>
+                <li>Share, distribute, or sell drugs or illegal substances</li>
+                <li>Display weapons with threatening intent</li>
+                <li>Impersonate others or provide false information with malicious intent</li>
+                <li>Attempt to hack, exploit, or disrupt the service</li>
+                <li>Use bots or automated systems to access the platform</li>
+                <li>Record other users without their explicit consent</li>
+                <li>Use the service for commercial purposes or advertising</li>
+            </ul>
+            <p><strong>Important:</strong> There is no monitoring, moderation, or enforcement of these rules. The developer cannot prevent you from violating these rules, and other users may also violate them. You acknowledge this risk.</p>
+        </div>
+
+        <div class="section">
+            <h2>6. What the Developer Does NOT Do</h2>
+            <p>The developer of Glimpse explicitly DOES NOT:</p>
+            <ul class="danger-list">
+                <li>Monitor, record, or store any conversations, video, audio, or text</li>
+                <li>Verify the age, identity, or intentions of users</li>
+                <li>Moderate content or user behavior</li>
+                <li>Provide customer support or technical assistance</li>
+                <li>Investigate complaints or reports</li>
+                <li>Remove users who violate rules</li>
+                <li>Prevent users from recording you</li>
+                <li>Control what other users say or do</li>
+                <li>Guarantee your safety or privacy</li>
+                <li>Track or log user activity</li>
+                <li>Collect any personal information about you</li>
+            </ul>
+            <div class="highlight">
+                <p>Glimpse is provided as-is, with no guarantees, no support, and no oversight. You are on your own.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>7. Technical Architecture & Your Privacy</h2>
+            <p>Glimpse uses peer-to-peer (WebRTC) technology:</p>
+            <ul>
+                <li>Video and audio streams directly between your browser and the other user's browser</li>
+                <li>Text messages are sent directly between users via WebRTC data channels</li>
+                <li>No video, audio, or text passes through the developer's servers</li>
+                <li>The developer cannot access, view, or record your communications</li>
+                <li>STUN servers (operated by Google) are used only to establish connections</li>
+            </ul>
+
+            <h3>What This Means:</h3>
+            <div class="highlight">
+                <p>The developer genuinely does not collect or store your data. However, this also means the developer has NO CONTROL over what other users do with your video, audio, or messages.</p>
+            </div>
+            <ul class="danger-list">
+                <li>Other users can record you using screen recording software</li>
+                <li>Other users can take screenshots of your video</li>
+                <li>Other users can save your messages</li>
+                <li>The developer cannot prevent, detect, or stop this</li>
+                <li>Once someone records you, that content is beyond anyone's control</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>8. Complete Disclaimer of Liability</h2>
+            <p><strong>THE DEVELOPER IS NOT RESPONSIBLE FOR ANYTHING THAT HAPPENS WHILE YOU USE THIS SERVICE.</strong></p>
+            <p>The developer explicitly disclaims all liability for:</p>
+            <ul>
+                <li>Any interactions between users, including harassment, abuse, threats, or illegal behavior</li>
+                <li>Any content you are exposed to, no matter how offensive, disturbing, or illegal</li>
+                <li>Any psychological harm, emotional distress, anxiety, or trauma you experience</li>
+                <li>Any physical harm that results from interactions or meetings arranged through the service</li>
+                <li>Any financial loss due to scams, fraud, or exploitation</li>
+                <li>Any recording, capturing, or distribution of your video, audio, or messages by other users</li>
+                <li>Any privacy violations, stalking, doxxing, or harassment that originates from this platform</li>
+                <li>Any damage to your reputation or relationships</li>
+                <li>Any legal consequences you face as a result of your use of this service</li>
+                <li>Any technical issues, bugs, errors, or service interruptions</li>
+                <li>Any security breaches, hacking, or unauthorized access</li>
+                <li>Actions of third-party services (PeerJS, STUN servers, hosting providers)</li>
+            </ul>
+            <div class="danger-highlight">
+                <p>YOU CAME HERE ON YOUR OWN. YOU USE THIS SERVICE ON YOUR OWN. ANY PROBLEMS YOU ENCOUNTER ARE YOUR OWN RESPONSIBILITY.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>9. Indemnification</h2>
+            <p>By using Glimpse, you agree to:</p>
+            <ul>
+                <li>Release the developer (Aryan S Rao) from any and all claims, damages, or losses</li>
+                <li>Indemnify and hold harmless the developer from any legal action taken against them as a result of your use of this service</li>
+                <li>Pay any legal fees, costs, or damages if you bring a lawsuit against the developer</li>
+                <li>Accept that you waive your right to sue the developer for anything related to this service</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>10. Legal Jurisdiction & Disputes</h2>
+            <ul>
+                <li>These terms are governed by the laws where the developer resides</li>
+                <li>Any disputes will be resolved in the appropriate courts of that jurisdiction</li>
+                <li>You agree to submit to the jurisdiction of those courts</li>
+                <li>You waive any right to a jury trial</li>
+                <li>You waive any right to participate in class-action lawsuits</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>11. Geographic Restrictions & Your Legal Responsibility</h2>
+            <p>You are responsible for determining whether your use of Glimpse complies with your local laws.</p>
+            <ul>
+                <li>Random video chat services may be restricted or illegal in your jurisdiction</li>
+                <li>You may be violating laws regarding online communications in your country</li>
+                <li>The developer is not responsible for your violation of local laws</li>
+                <li>Using VPNs or other tools to circumvent restrictions is at your own risk</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>12. Changes to These Terms</h2>
+            <p>The developer reserves the right to:</p>
+            <ul>
+                <li>Modify these terms at any time without notice</li>
+                <li>Discontinue the service at any time without notice</li>
+                <li>Change the technical implementation or features</li>
+            </ul>
+            <p>Continued use after changes constitutes your acceptance of the new terms.</p>
+        </div>
+
+        <div class="section">
+            <h2>13. Emergency Situations</h2>
+            <p>If you witness serious crimes or illegal content:</p>
+            <ul>
+                <li>End the chat immediately</li>
+                <li>Report to law enforcement in your jurisdiction</li>
+                <li>United States: Report child exploitation to NCMEC CyberTipline (CyberTipline.org)</li>
+                <li>International: Contact Interpol or your local police</li>
+            </ul>
+            <p><strong>Do NOT report incidents to the developer.</strong> The developer has no ability to investigate, take action, or assist law enforcement.</p>
+        </div>
+
+        <div class="section">
+            <h2>14. Final Acknowledgment</h2>
+            <p>By clicking "I Agree - Start Chatting" and using Glimpse, you explicitly acknowledge that:</p>
+            <ul>
+                <li>You have read and understood these entire terms</li>
+                <li>You are 18 years of age or older</li>
+                <li>You understand you will be connected with random strangers</li>
+                <li>You understand the serious risks involved</li>
+                <li>You accept complete responsibility for your safety and conduct</li>
+                <li>You agree to hold the developer harmless from any consequences</li>
+                <li>You understand the developer has no control over other users</li>
+                <li>You understand there is no support, monitoring, or moderation</li>
+                <li>You will not hold the developer liable for any negative experiences</li>
+                <li>You came here voluntarily and use this service at your own risk</li>
+            </ul>
+            <div class="danger-highlight">
+                <p>IF YOU DO NOT AGREE WITH ALL OF THESE TERMS, YOU MUST NOT USE THIS SERVICE.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>This service is provided by Aryan S Rao</p>
+            <p>
+                <a href="https://aryansrao.github.io" target="_blank" rel="noopener noreferrer">Developer Portfolio</a> | 
+                <a href="https://github.com/aryansrao/glimpse" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+            </p>
+            <p>Last Updated: December 2024</p>
+            <a href="/" class="btn">I Understand - Go to Glimpse</a>
+        </div>
+    </div>
+</body>
+</html>
