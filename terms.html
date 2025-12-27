@@ -51,19 +51,6 @@
             font-weight: 500;
         }
 
-        .back-link {
-            display: inline-block;
-            margin-bottom: 40px;
-            color: #3b82f6;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: opacity 0.2s;
-        }
-
-        .back-link:hover {
-            opacity: 0.7;
-        }
 
         .warning-box {
             background: rgba(239, 68, 68, 0.1);
@@ -205,7 +192,7 @@
         }
 
         .btn {
-            display: inline-block;
+            display: block;
             padding: 16px 48px;
             background: #ffffff;
             color: #000000;
@@ -214,7 +201,8 @@
             font-size: 15px;
             font-weight: 600;
             transition: all 0.2s;
-            margin-top: 24px;
+            margin: 24px auto 0;
+            width: max-content;
         }
 
         .btn:hover {
@@ -272,8 +260,6 @@
             <div class="logo">Glimpse</div>
             <div class="subtitle">Terms of Use & Legal Disclaimer</div>
         </div>
-
-        <a href="/" class="back-link">← Back to Glimpse</a>
 
         <div class="warning-box">
             <h2>READ THIS CAREFULLY BEFORE USING GLIMPSE</h2>
@@ -523,7 +509,7 @@
 
         <div class="section">
             <h2>14. Final Acknowledgment</h2>
-            <p>By clicking "I Agree - Start Chatting" and using Glimpse, you explicitly acknowledge that:</p>
+            <p>By clicking "Start Chatting" and using Glimpse, you explicitly acknowledge that:</p>
             <ul>
                 <li>You have read and understood these entire terms</li>
                 <li>You are 18 years of age or older</li>
@@ -540,6 +526,7 @@
                 <p>IF YOU DO NOT AGREE WITH ALL OF THESE TERMS, YOU MUST NOT USE THIS SERVICE.</p>
             </div>
         </div>
+        <a href="/" class="btn">I Understand - Go to Glimpse</a>
 
         <div class="footer">
             <p>This service is provided by Aryan S Rao</p>
@@ -548,7 +535,6 @@
                 <a href="https://github.com/aryansrao/glimpse" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
             </p>
             <p>Last Updated: December 2025</p>
-            <a href="/" class="btn">I Understand - Go to Glimpse</a>
         </div>
     </div>
 </body>
