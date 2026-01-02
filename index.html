@@ -219,6 +219,11 @@
             letter-spacing: -0.01em;
         }
 
+        .video-label.sharing {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
         .placeholder {
             display: flex;
             flex-direction: column;
@@ -484,6 +489,15 @@
             stroke: #6b7280;
         }
 
+        .control-btn.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .control-btn.active svg {
+            stroke: #3b82f6;
+        }
+
         .control-btn.danger {
             background: rgba(239, 68, 68, 0.1);
             border-color: rgba(239, 68, 68, 0.2);
@@ -656,12 +670,12 @@
             .controls {
                 bottom: 16px;
                 padding: 12px 16px;
-                gap: 10px;
+                gap: 8px;
             }
 
             .control-btn {
-                width: 48px;
-                height: 48px;
+                width: 44px;
+                height: 44px;
             }
 
             .control-btn svg {
@@ -723,18 +737,18 @@
 
             .controls {
                 bottom: 12px;
-                padding: 10px 14px;
-                gap: 8px;
+                padding: 10px 12px;
+                gap: 6px;
             }
 
             .control-btn {
-                width: 44px;
-                height: 44px;
+                width: 40px;
+                height: 40px;
             }
 
             .control-btn svg {
-                width: 15px;
-                height: 15px;
+                width: 14px;
+                height: 14px;
             }
 
             .chat-panel {
@@ -770,7 +784,7 @@
                 <div class="video-container">
                     <div class="video-wrapper">
                         <video id="localVideo" autoplay muted playsinline></video>
-                        <div class="video-label">You</div>
+                        <div class="video-label" id="localLabel">You</div>
                     </div>
                     <div class="video-wrapper">
                         <video id="remoteVideo" autoplay playsinline class="hidden"></video>
@@ -820,6 +834,14 @@
                 </svg>
             </button>
 
+            <button class="control-btn" onclick="toggleScreenShare()" id="screenBtn" title="Share Screen">
+                <svg id="screenIcon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                    <line x1="8" y1="21" x2="16" y2="21"/>
+                    <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+            </button>
+
             <button class="control-btn" onclick="toggleChat()" id="chatBtn" title="Toggle Chat">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -845,6 +867,9 @@
         let myPeerId, myLobbySlot;
         let isVideoEnabled = true, isAudioEnabled = true;
         let isSearching = false, isConnected = false;
+        let isScreenSharing = false;
+        let originalVideoTrack = null;
+        let screenStream = null;
         let searchInterval;
         let messages = [];
         
@@ -1086,6 +1111,11 @@
             messages = [];
             document.getElementById('chatMessages').innerHTML = '';
 
+            // Stop screen sharing if active
+            if (isScreenSharing) {
+                stopScreenShare();
+            }
+
             resetRemoteVideo();
             
             if (peer && peer.open && !peer.destroyed) {
@@ -1114,8 +1144,116 @@
             document.getElementById('nextBtn').disabled = true;
         }
 
+        async function toggleScreenShare() {
+            if (isScreenSharing) {
+                stopScreenShare();
+            } else {
+                await startScreenShare();
+            }
+        }
+
+        async function startScreenShare() {
+            try {
+                // Request screen capture
+                screenStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        cursor: 'always',
+                        displaySurface: 'monitor'
+                    }
+                });
+
+                // Store original video track
+                const videoTrack = localStream.getVideoTracks()[0];
+                originalVideoTrack = videoTrack;
+
+                // Get screen video track
+                const screenTrack = screenStream.getVideoTracks()[0];
+
+                // Handle user stopping screen share via browser UI
+                screenTrack.onended = () => {
+                    stopScreenShare();
+                };
+
+                // Replace video track in local stream
+                localStream.removeTrack(videoTrack);
+                localStream.addTrack(screenTrack);
+
+                // Update local video display
+                document.getElementById('localVideo').srcObject = localStream;
+
+                // If connected, replace track in peer connection
+                if (isConnected && currentCall && currentCall.peerConnection) {
+                    const sender = currentCall.peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+                    if (sender) {
+                        sender.replaceTrack(screenTrack);
+                    }
+                }
+
+                // Update UI
+                isScreenSharing = true;
+                document.getElementById('screenBtn').classList.add('active');
+                document.getElementById('localLabel').textContent = 'Your Screen';
+                document.getElementById('localLabel').classList.add('sharing');
+                document.getElementById('videoBtn').disabled = true;
+
+                console.log('Screen sharing started');
+
+            } catch (error) {
+                console.error('Error starting screen share:', error);
+                if (error.name !== 'NotAllowedError') {
+                    alert('Could not start screen sharing. Please try again.');
+                }
+            }
+        }
+
+        function stopScreenShare() {
+            if (!isScreenSharing || !originalVideoTrack) return;
+
+            try {
+                // Stop screen stream
+                if (screenStream) {
+                    screenStream.getTracks().forEach(track => track.stop());
+                    screenStream = null;
+                }
+
+                // Get current screen track from local stream
+                const currentVideoTrack = localStream.getVideoTracks()[0];
+                
+                // Remove screen track and add back original camera track
+                if (currentVideoTrack) {
+                    localStream.removeTrack(currentVideoTrack);
+                }
+                localStream.addTrack(originalVideoTrack);
+
+                // Update local video display
+                document.getElementById('localVideo').srcObject = localStream;
+
+                // If connected, replace track in peer connection
+                if (isConnected && currentCall && currentCall.peerConnection) {
+                    const sender = currentCall.peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+                    if (sender) {
+                        sender.replaceTrack(originalVideoTrack);
+                    }
+                }
+
+                // Update UI
+                isScreenSharing = false;
+                document.getElementById('screenBtn').classList.remove('active');
+                document.getElementById('localLabel').textContent = 'You';
+                document.getElementById('localLabel').classList.remove('sharing');
+                document.getElementById('videoBtn').disabled = false;
+
+                originalVideoTrack = null;
+
+                console.log('Screen sharing stopped');
+
+            } catch (error) {
+                console.error('Error stopping screen share:', error);
+            }
+        }
+
         function toggleVideo() {
-            if (localStream && localStream.getVideoTracks().length > 0) {
+            if (localStream && localStream.getVideoTracks().length > 0 && !isScreenSharing) {
                 isVideoEnabled = !isVideoEnabled;
                 localStream.getVideoTracks()[0].enabled = isVideoEnabled;
                 document.getElementById('videoBtn').classList.toggle('disabled');
@@ -1193,6 +1331,12 @@
             if (searchInterval) {
                 clearInterval(searchInterval);
             }
+
+            // Stop screen sharing if active
+            if (isScreenSharing) {
+                stopScreenShare();
+            }
+
             if (localStream) {
                 localStream.getTracks().forEach(track => track.stop());
             }
