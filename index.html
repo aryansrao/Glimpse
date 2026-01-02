@@ -573,6 +573,12 @@
             text-align: center;
         }
 
+        .start-options {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
         .start-btn {
             padding: 16px 48px;
             font-size: 15px;
@@ -593,6 +599,142 @@
 
         .start-btn:active {
             transform: translateY(0);
+        }
+
+        .start-btn.secondary {
+            background: rgba(255,255,255,0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .start-btn.secondary:hover {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 12px 40px rgba(255,255,255,0.1);
+        }
+
+        .room-input-container {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .room-input-container.visible {
+            display: flex;
+        }
+
+        .room-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Geist', sans-serif;
+            outline: none;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .room-input:focus {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .room-input::placeholder {
+            color: #6b7280;
+        }
+
+        .room-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .room-actions button {
+            flex: 1;
+        }
+
+        .share-link-container {
+            position: absolute;
+            top: 80px;
+            right: 24px;
+            padding: 16px 20px;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 20;
+            max-width: 320px;
+        }
+
+        .share-link-container.visible {
+            display: flex;
+        }
+
+        .share-link-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .share-link-header h4 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .share-link-close {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .share-link-close:hover {
+            color: #fff;
+        }
+
+        .share-link-url {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #6b7280;
+            font-size: 12px;
+            font-family: 'Geist Mono', monospace;
+            word-break: break-all;
+        }
+
+        .copy-link-btn {
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 500;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Geist', sans-serif;
+        }
+
+        .copy-link-btn:hover {
+            background: rgba(59, 130, 246, 0.25);
+        }
+
+        .copy-link-btn.copied {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: #10b981;
         }
 
         .creator-credit {
@@ -691,6 +833,16 @@
                 font-size: 14px;
             }
 
+            .start-options {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .start-btn {
+                padding: 14px 32px;
+            }
+
             .creator-credit {
                 font-size: 12px;
                 margin-top: 32px;
@@ -722,6 +874,12 @@
             .send-btn {
                 padding: 10px 16px;
                 font-size: 13px;
+            }
+
+            .share-link-container {
+                right: 16px;
+                left: 16px;
+                max-width: none;
             }
         }
 
@@ -761,7 +919,18 @@
     <div class="start-screen" id="startScreen">
         <h1>Glimpse</h1>
         <p>Connect with strangers worldwide</p>
-        <button class="start-btn" onclick="startChat()">Start Chatting</button>
+        <div class="start-options">
+            <button class="start-btn" onclick="startRandomChat()">Random Chat</button>
+            <button class="start-btn secondary" onclick="showPrivateRoom()">Private Room</button>
+        </div>
+        <div class="room-input-container" id="roomInputContainer">
+            <input type="text" class="room-input" id="roomIdInput" placeholder="Enter room ID to join">
+            <div class="room-actions">
+                <button class="start-btn secondary" onclick="createPrivateRoom()">Create Room</button>
+                <button class="start-btn" onclick="joinPrivateRoom()">Join Room</button>
+            </div>
+            <button class="start-btn secondary" onclick="hidePrivateRoom()" style="margin-top: 8px;">Back</button>
+        </div>
         <div class="creator-credit">
             Created by <a href="https://aryansrao.github.io" target="_blank" rel="noopener noreferrer">Aryan S Rao</a>
         </div>
@@ -777,6 +946,19 @@
                 <div class="status-dot" id="statusDot"></div>
                 <span id="statusText">Initializing</span>
             </div>
+        </div>
+
+        <div class="share-link-container" id="shareLinkContainer">
+            <div class="share-link-header">
+                <h4>Share this link</h4>
+                <button class="share-link-close" onclick="hideShareLink()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="share-link-url" id="shareLinkUrl"></div>
+            <button class="copy-link-btn" id="copyLinkBtn" onclick="copyRoomLink()">Copy Link</button>
         </div>
 
         <div class="main-content">
@@ -795,7 +977,7 @@
                                     <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                                 </svg>
                             </div>
-                            <span>Searching for someone</span>
+                            <span id="waitingText">Searching for someone</span>
                         </div>
                         <div class="video-label hidden" id="remoteLabel">Stranger</div>
                     </div>
@@ -842,6 +1024,13 @@
                 </svg>
             </button>
 
+            <button class="control-btn hidden" id="shareLinkBtn" onclick="showShareLink()" title="Share Room Link">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
+            </button>
+
             <button class="control-btn" onclick="toggleChat()" id="chatBtn" title="Toggle Chat">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -872,10 +1061,61 @@
         let screenStream = null;
         let searchInterval;
         let messages = [];
+        let isPrivateRoom = false;
+        let roomId = null;
         
         const LOBBY_SLOTS = 20;
         const LOBBY_PREFIX = 'glimpse-';
+        const ROOM_PREFIX = 'glimpse-room-';
         let currentSlotIndex = 0;
+
+        // Check if there's a room ID in the URL
+        function checkUrlForRoom() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlRoomId = urlParams.get('room');
+            if (urlRoomId) {
+                document.getElementById('roomIdInput').value = urlRoomId;
+                showPrivateRoom();
+            }
+        }
+
+        function showPrivateRoom() {
+            document.querySelector('.start-options').style.display = 'none';
+            document.getElementById('roomInputContainer').classList.add('visible');
+        }
+
+        function hidePrivateRoom() {
+            document.querySelector('.start-options').style.display = 'flex';
+            document.getElementById('roomInputContainer').classList.remove('visible');
+            document.getElementById('roomIdInput').value = '';
+        }
+
+        function generateRoomId() {
+            return Math.random().toString(36).substring(2, 10).toUpperCase();
+        }
+
+        async function createPrivateRoom() {
+            roomId = generateRoomId();
+            isPrivateRoom = true;
+            await startChat();
+        }
+
+        async function joinPrivateRoom() {
+            const inputRoomId = document.getElementById('roomIdInput').value.trim();
+            if (!inputRoomId) {
+                alert('Please enter a room ID');
+                return;
+            }
+            roomId = inputRoomId;
+            isPrivateRoom = true;
+            await startChat();
+        }
+
+        async function startRandomChat() {
+            isPrivateRoom = false;
+            roomId = null;
+            await startChat();
+        }
 
         async function startChat() {
             try {
@@ -888,13 +1128,188 @@
                 document.getElementById('startScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
 
-                myLobbySlot = Math.floor(Math.random() * LOBBY_SLOTS);
-                initializePeer();
+                if (isPrivateRoom) {
+                    myLobbySlot = null;
+                    initializePrivateRoomPeer();
+                } else {
+                    myLobbySlot = Math.floor(Math.random() * LOBBY_SLOTS);
+                    initializePeer();
+                }
 
             } catch (error) {
                 console.error('Error starting chat:', error);
                 alert('Could not access camera/microphone. Please grant permissions.');
             }
+        }
+
+        function initializePrivateRoomPeer() {
+            const peerId = ROOM_PREFIX + roomId;
+            
+            peer = new Peer(peerId, {
+                config: {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:stun2.l.google.com:19302' },
+                        { urls: 'stun:stun3.l.google.com:19302' }
+                    ]
+                }
+            });
+
+            peer.on('open', (id) => {
+                myPeerId = id;
+                console.log('Room created/joined:', roomId);
+                
+                // Show share link button
+                document.getElementById('shareLinkBtn').classList.remove('hidden');
+                
+                // Hide next button in private rooms
+                document.getElementById('nextBtn').classList.add('hidden');
+                
+                updateStatus('Waiting for friend');
+                document.getElementById('waitingText').textContent = 'Waiting for friend to join';
+                
+                // Try to call the other peer if they're already waiting
+                tryConnectToRoom();
+            });
+
+            peer.on('call', (call) => {
+                if (isConnected) {
+                    console.log('Already connected');
+                    return;
+                }
+                
+                console.log('Incoming call in private room');
+                call.answer(localStream);
+                handleIncomingCall(call);
+            });
+
+            peer.on('connection', (conn) => {
+                setupDataConnection(conn);
+            });
+
+            peer.on('error', (error) => {
+                console.error('Peer error:', error);
+                
+                if (error.type === 'unavailable-id') {
+                    // Room already exists, try to connect as second peer
+                    console.log('Room exists, connecting as second peer...');
+                    peer.destroy();
+                    setTimeout(() => connectToExistingRoom(), 500);
+                } else if (error.type === 'network') {
+                    console.log('Network error, retrying...');
+                    setTimeout(() => {
+                        if (peer && !peer.open && !peer.destroyed) {
+                            peer.reconnect();
+                        }
+                    }, 2000);
+                }
+            });
+
+            peer.on('disconnected', () => {
+                console.log('Disconnected from signaling server');
+                if (!isConnected && peer && !peer.destroyed) {
+                    peer.reconnect();
+                }
+            });
+        }
+
+        function connectToExistingRoom() {
+            // Create peer with a modified ID to join as second person
+            const peerId = ROOM_PREFIX + roomId + '-guest';
+            
+            peer = new Peer(peerId, {
+                config: {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:stun2.l.google.com:19302' },
+                        { urls: 'stun:stun3.l.google.com:19302' }
+                    ]
+                }
+            });
+
+            peer.on('open', (id) => {
+                myPeerId = id;
+                console.log('Connecting to existing room:', roomId);
+                updateStatus('Connecting');
+                
+                // Call the host
+                const hostPeerId = ROOM_PREFIX + roomId;
+                tryCallPeer(hostPeerId);
+            });
+
+            peer.on('call', (call) => {
+                if (isConnected) return;
+                call.answer(localStream);
+                handleIncomingCall(call);
+            });
+
+            peer.on('connection', (conn) => {
+                setupDataConnection(conn);
+            });
+
+            peer.on('error', (error) => {
+                console.error('Guest peer error:', error);
+            });
+        }
+
+        function tryConnectToRoom() {
+            // Try to connect to guest if they're already there
+            const guestPeerId = ROOM_PREFIX + roomId + '-guest';
+            
+            setTimeout(() => {
+                if (!isConnected) {
+                    tryCallPeer(guestPeerId);
+                }
+            }, 1000);
+        }
+
+        function tryCallPeer(targetPeerId) {
+            try {
+                const call = peer.call(targetPeerId, localStream);
+                
+                if (call) {
+                    call.on('stream', (remoteStream) => {
+                        if (!isConnected) {
+                            handleOutgoingCall(call, remoteStream, targetPeerId);
+                        }
+                    });
+
+                    call.on('error', (error) => {
+                        console.log('Call error:', error);
+                    });
+                }
+            } catch (error) {
+                console.log('Error calling peer:', error);
+            }
+        }
+
+        function showShareLink() {
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}?room=${roomId}`;
+            document.getElementById('shareLinkUrl').textContent = shareUrl;
+            document.getElementById('shareLinkContainer').classList.add('visible');
+        }
+
+        function hideShareLink() {
+            document.getElementById('shareLinkContainer').classList.remove('visible');
+        }
+
+        function copyRoomLink() {
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}?room=${roomId}`;
+            
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                const btn = document.getElementById('copyLinkBtn');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.textContent = 'Copy Link';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
         }
 
         function initializePeer() {
@@ -1088,7 +1503,10 @@
             document.getElementById('remotePlaceholder').classList.add('hidden');
             document.getElementById('remoteLabel').classList.remove('hidden');
             updateStatus('Connected', true);
-            document.getElementById('nextBtn').disabled = false;
+            
+            if (!isPrivateRoom) {
+                document.getElementById('nextBtn').disabled = false;
+            }
         }
 
         function handleDisconnect() {
@@ -1118,7 +1536,11 @@
 
             resetRemoteVideo();
             
-            if (peer && peer.open && !peer.destroyed) {
+            if (isPrivateRoom) {
+                // In private rooms, just wait for reconnection
+                updateStatus('Waiting for friend');
+                document.getElementById('waitingText').textContent = 'Friend disconnected. Waiting...';
+            } else if (peer && peer.open && !peer.destroyed) {
                 setTimeout(() => {
                     isSearching = false;
                     startSearching();
@@ -1127,6 +1549,7 @@
         }
 
         function nextPerson() {
+            if (isPrivateRoom) return; // No next in private rooms
             console.log('Next button clicked');
             handleDisconnect();
         }
@@ -1140,8 +1563,12 @@
             remoteVideo.classList.add('hidden');
             document.getElementById('remotePlaceholder').classList.remove('hidden');
             document.getElementById('remoteLabel').classList.add('hidden');
-            updateStatus('Searching');
-            document.getElementById('nextBtn').disabled = true;
+            
+            if (!isPrivateRoom) {
+                updateStatus('Searching');
+                document.getElementById('waitingText').textContent = 'Searching for someone';
+                document.getElementById('nextBtn').disabled = true;
+            }
         }
 
         async function toggleScreenShare() {
@@ -1154,7 +1581,6 @@
 
         async function startScreenShare() {
             try {
-                // Request screen capture
                 screenStream = await navigator.mediaDevices.getDisplayMedia({
                     video: {
                         cursor: 'always',
@@ -1162,26 +1588,20 @@
                     }
                 });
 
-                // Store original video track
                 const videoTrack = localStream.getVideoTracks()[0];
                 originalVideoTrack = videoTrack;
 
-                // Get screen video track
                 const screenTrack = screenStream.getVideoTracks()[0];
 
-                // Handle user stopping screen share via browser UI
                 screenTrack.onended = () => {
                     stopScreenShare();
                 };
 
-                // Replace video track in local stream
                 localStream.removeTrack(videoTrack);
                 localStream.addTrack(screenTrack);
 
-                // Update local video display
                 document.getElementById('localVideo').srcObject = localStream;
 
-                // If connected, replace track in peer connection
                 if (isConnected && currentCall && currentCall.peerConnection) {
                     const sender = currentCall.peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
                     if (sender) {
@@ -1189,7 +1609,6 @@
                     }
                 }
 
-                // Update UI
                 isScreenSharing = true;
                 document.getElementById('screenBtn').classList.add('active');
                 document.getElementById('localLabel').textContent = 'Your Screen';
@@ -1210,25 +1629,20 @@
             if (!isScreenSharing || !originalVideoTrack) return;
 
             try {
-                // Stop screen stream
                 if (screenStream) {
                     screenStream.getTracks().forEach(track => track.stop());
                     screenStream = null;
                 }
 
-                // Get current screen track from local stream
                 const currentVideoTrack = localStream.getVideoTracks()[0];
                 
-                // Remove screen track and add back original camera track
                 if (currentVideoTrack) {
                     localStream.removeTrack(currentVideoTrack);
                 }
                 localStream.addTrack(originalVideoTrack);
 
-                // Update local video display
                 document.getElementById('localVideo').srcObject = localStream;
 
-                // If connected, replace track in peer connection
                 if (isConnected && currentCall && currentCall.peerConnection) {
                     const sender = currentCall.peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
                     if (sender) {
@@ -1236,7 +1650,6 @@
                     }
                 }
 
-                // Update UI
                 isScreenSharing = false;
                 document.getElementById('screenBtn').classList.remove('active');
                 document.getElementById('localLabel').textContent = 'You';
@@ -1316,7 +1729,7 @@
             
             const label = document.createElement('div');
             label.className = 'message-label';
-            label.textContent = type === 'sent' ? 'You' : 'Stranger';
+            label.textContent = type === 'sent' ? 'You' : (isPrivateRoom ? 'Friend' : 'Stranger');
             
             messageDiv.appendChild(label);
             messageDiv.appendChild(bubble);
@@ -1332,7 +1745,6 @@
                 clearInterval(searchInterval);
             }
 
-            // Stop screen sharing if active
             if (isScreenSharing) {
                 stopScreenShare();
             }
@@ -1352,13 +1764,22 @@
 
             isConnected = false;
             isSearching = false;
+            isPrivateRoom = false;
+            roomId = null;
             messages = [];
 
             document.getElementById('startScreen').classList.remove('hidden');
             document.getElementById('mainApp').classList.add('hidden');
             document.getElementById('chatPanel').classList.remove('visible');
+            document.getElementById('shareLinkContainer').classList.remove('visible');
             document.getElementById('chatMessages').innerHTML = '';
+            document.getElementById('shareLinkBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+            hidePrivateRoom();
             resetRemoteVideo();
+            
+            // Clear URL parameters
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
 
         function updateStatus(text, connected = false) {
@@ -1377,6 +1798,9 @@
         window.addEventListener('beforeunload', () => {
             stopChat();
         });
+
+        // Check for room ID in URL on page load
+        checkUrlForRoom();
     </script>
 </body>
 </html>
