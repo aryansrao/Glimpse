@@ -205,6 +205,39 @@
             background: #000;
         }
 
+        .video-wrapper.audio-mode {
+            background: #000000;
+        }
+
+        .audio-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            color: #6b7280;
+        }
+
+        .audio-placeholder-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .audio-placeholder-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: #6b7280;
+        }
+
+        .audio-placeholder-text {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
         .video-label {
             position: absolute;
             bottom: 16px;
@@ -222,6 +255,53 @@
         .video-label.sharing {
             background: rgba(59, 130, 246, 0.3);
             border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .audio-avatar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .audio-avatar-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.2);
+            border: 3px solid rgba(139, 92, 246, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: audioGlow 2s ease-in-out infinite;
+        }
+
+        .audio-avatar-icon.speaking {
+            animation: audioSpeaking 0.5s ease-in-out infinite;
+        }
+
+        @keyframes audioGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); }
+        }
+
+        @keyframes audioSpeaking {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .audio-avatar-icon svg {
+            width: 60px;
+            height: 60px;
+            stroke: #8b5cf6;
+            fill: none;
+        }
+
+        .audio-avatar-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.02em;
         }
 
         .placeholder {
@@ -573,6 +653,102 @@
             text-align: center;
         }
 
+        .mode-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .mode-modal.visible {
+            display: flex;
+        }
+
+        .mode-modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .mode-options {
+            display: flex;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .mode-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mode-circle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mode-circle.selected {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.4);
+        }
+
+        .mode-circle svg {
+            width: 60px;
+            height: 60px;
+            stroke: #ffffff;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .mode-circle.selected svg {
+            stroke: #3b82f6;
+        }
+
+        .mode-continue-btn {
+            padding: 16px 64px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            border: none;
+            background: #3b82f6;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Geist', sans-serif;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        .mode-continue-btn.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        .mode-continue-btn:hover {
+            background: #2563eb;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
         .start-options {
             display: flex;
             gap: 16px;
@@ -804,6 +980,20 @@
                 padding: 5px 10px;
             }
 
+            .audio-avatar-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            .audio-avatar-icon svg {
+                width: 50px;
+                height: 50px;
+            }
+
+            .audio-avatar-label {
+                font-size: 16px;
+            }
+
             .chat-panel {
                 width: 90%;
                 max-width: 360px;
@@ -881,6 +1071,25 @@
                 left: 16px;
                 max-width: none;
             }
+
+            .mode-options {
+                gap: 32px;
+            }
+
+            .mode-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .mode-circle svg {
+                width: 50px;
+                height: 50px;
+            }
+
+            .mode-continue-btn {
+                padding: 14px 48px;
+                font-size: 15px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -912,6 +1121,25 @@
             .chat-panel {
                 width: 95%;
             }
+
+            .mode-options {
+                gap: 24px;
+            }
+
+            .mode-circle {
+                width: 100px;
+                height: 100px;
+            }
+
+            .mode-circle svg {
+                width: 40px;
+                height: 40px;
+            }
+
+            .mode-continue-btn {
+                padding: 12px 40px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -919,9 +1147,10 @@
     <div class="start-screen" id="startScreen">
         <h1>Glimpse</h1>
         <p>Connect with strangers worldwide</p>
+
         <div class="start-options">
-            <button class="start-btn" onclick="startRandomChat()">Random Chat</button>
-            <button class="start-btn secondary" onclick="showPrivateRoom()">Private Room</button>
+            <button class="start-btn" onclick="showModeModal('random')">Random Chat</button>
+            <button class="start-btn secondary" onclick="showModeModal('private')">Private Room</button>
         </div>
         <div class="room-input-container" id="roomInputContainer">
             <input type="text" class="room-input" id="roomIdInput" placeholder="Enter room ID to join">
@@ -936,6 +1165,26 @@
         </div>
         <div class="terms-note">
             By using <strong>Glimpse</strong> you've been agreed to the <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms</a>.
+        </div>
+    </div>
+
+    <div class="mode-modal" id="modeModal" onclick="handleModalClick(event)">
+        <div class="mode-modal-content">
+            <div class="mode-options">
+                <div class="mode-circle selected" onclick="selectMode('video', event)" id="videoModeCircle">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M23 7l-7 5 7 5V7z"/>
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                    </svg>
+                </div>
+                <div class="mode-circle" onclick="selectMode('audio', event)" id="audioModeCircle">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/>
+                    </svg>
+                </div>
+            </div>
+            <button class="mode-continue-btn visible" onclick="proceedWithMode(event)" id="continueBtn">Continue</button>
         </div>
     </div>
 
@@ -963,13 +1212,31 @@
 
         <div class="main-content">
             <div class="video-section">
-                <div class="video-container">
-                    <div class="video-wrapper">
+                <div class="video-container" id="videoContainer">
+                    <div class="video-wrapper" id="localWrapper">
                         <video id="localVideo" autoplay muted playsinline></video>
+                        <div class="audio-placeholder hidden" id="localAudioPlaceholder">
+                            <div class="audio-placeholder-icon">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" stroke-width="2"/>
+                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="audio-placeholder-text">Audio Only</div>
+                        </div>
                         <div class="video-label" id="localLabel">You</div>
                     </div>
-                    <div class="video-wrapper">
+                    <div class="video-wrapper" id="remoteWrapper">
                         <video id="remoteVideo" autoplay playsinline class="hidden"></video>
+                        <div class="audio-placeholder hidden" id="remoteAudioPlaceholder">
+                            <div class="audio-placeholder-icon">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" stroke-width="2"/>
+                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="audio-placeholder-text">Audio Only</div>
+                        </div>
                         <div class="placeholder" id="remotePlaceholder">
                             <div class="placeholder-icon">
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1016,7 +1283,7 @@
                 </svg>
             </button>
 
-            <button class="control-btn" onclick="toggleScreenShare()" id="screenBtn" title="Share Screen">
+            <button class="control-btn hidden" onclick="toggleScreenShare()" id="screenBtn" title="Share Screen">
                 <svg id="screenIcon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
                     <line x1="8" y1="21" x2="16" y2="21"/>
@@ -1063,28 +1330,104 @@
         let messages = [];
         let isPrivateRoom = false;
         let roomId = null;
+        let isAudioOnly = false;
+        let currentMode = 'video';
+        let pendingAction = null; // 'random' or 'private'
         
         const LOBBY_SLOTS = 20;
         const LOBBY_PREFIX = 'glimpse-';
         const ROOM_PREFIX = 'glimpse-room-';
+        const AUDIO_LOBBY_PREFIX = 'glimpse-audio-';
+        const AUDIO_ROOM_PREFIX = 'glimpse-audio-room-';
         let currentSlotIndex = 0;
 
-        // Check if there's a room ID in the URL
-        function checkUrlForRoom() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlRoomId = urlParams.get('room');
-            if (urlRoomId) {
-                document.getElementById('roomIdInput').value = urlRoomId;
+        function showModeModal(action) {
+            pendingAction = action;
+            document.getElementById('modeModal').classList.add('visible');
+        }
+
+        function handleModalClick(event) {
+            // Close modal if clicking on the backdrop (not on content)
+            if (event.target === document.getElementById('modeModal')) {
+                closeModeModal();
+            }
+        }
+
+        function selectMode(mode, event) {
+            event.stopPropagation(); // Prevent modal from closing
+            currentMode = mode;
+            isAudioOnly = (mode === 'audio');
+            
+            const videoCircle = document.getElementById('videoModeCircle');
+            const audioCircle = document.getElementById('audioModeCircle');
+            const continueBtn = document.getElementById('continueBtn');
+            
+            if (mode === 'video') {
+                videoCircle.classList.add('selected');
+                audioCircle.classList.remove('selected');
+            } else {
+                videoCircle.classList.remove('selected');
+                audioCircle.classList.add('selected');
+            }
+            
+            continueBtn.classList.add('visible');
+        }
+
+        function closeModeModal() {
+            document.getElementById('modeModal').classList.remove('visible');
+            pendingAction = null;
+            // Reset to video mode as default
+            const videoCircle = document.getElementById('videoModeCircle');
+            const audioCircle = document.getElementById('audioModeCircle');
+            videoCircle.classList.add('selected');
+            audioCircle.classList.remove('selected');
+            currentMode = 'video';
+            isAudioOnly = false;
+        }
+
+        function proceedWithMode(event) {
+            event.stopPropagation(); // Prevent modal from closing
+            if (!pendingAction) return;
+            
+            document.getElementById('modeModal').classList.remove('visible');
+            
+            if (pendingAction === 'random') {
+                startRandomChat();
+            } else if (pendingAction === 'private') {
+                // Just show the room input, don't start chat yet
                 showPrivateRoom();
             }
         }
 
+        function checkUrlForRoom() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlRoomId = urlParams.get('room');
+            const urlMode = urlParams.get('mode');
+            
+            if (urlRoomId) {
+                document.getElementById('roomIdInput').value = urlRoomId;
+                if (urlMode === 'audio') {
+                    currentMode = 'audio';
+                    isAudioOnly = true;
+                } else {
+                    currentMode = 'video';
+                    isAudioOnly = false;
+                }
+                // Auto-start private room from URL
+                isPrivateRoom = true;
+                roomId = urlRoomId;
+                startChat();
+            }
+        }
+
         function showPrivateRoom() {
+            // Hide the main buttons, show room input
             document.querySelector('.start-options').style.display = 'none';
             document.getElementById('roomInputContainer').classList.add('visible');
         }
 
         function hidePrivateRoom() {
+            // Show main buttons, hide room input
             document.querySelector('.start-options').style.display = 'flex';
             document.getElementById('roomInputContainer').classList.remove('visible');
             document.getElementById('roomIdInput').value = '';
@@ -1119,14 +1462,21 @@
 
         async function startChat() {
             try {
-                localStream = await navigator.mediaDevices.getUserMedia({
-                    video: { width: 1280, height: 720 },
-                    audio: true
-                });
+                const constraints = isAudioOnly ? 
+                    { audio: true, video: false } : 
+                    { video: { width: 1280, height: 720 }, audio: true };
+                
+                localStream = await navigator.mediaDevices.getUserMedia(constraints);
 
-                document.getElementById('localVideo').srcObject = localStream;
                 document.getElementById('startScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
+
+                if (isAudioOnly) {
+                    setupAudioOnlyUI();
+                } else {
+                    document.getElementById('localVideo').srcObject = localStream;
+                    document.getElementById('localVideo').classList.remove('hidden');
+                }
 
                 if (isPrivateRoom) {
                     myLobbySlot = null;
@@ -1138,12 +1488,22 @@
 
             } catch (error) {
                 console.error('Error starting chat:', error);
-                alert('Could not access camera/microphone. Please grant permissions.');
+                const mediaType = isAudioOnly ? 'microphone' : 'camera/microphone';
+                alert(`Could not access ${mediaType}. Please grant permissions.`);
             }
         }
 
+        function setupAudioOnlyUI() {
+            // Hide video, show audio placeholder
+            document.getElementById('localVideo').classList.add('hidden');
+            document.getElementById('localAudioPlaceholder').classList.remove('hidden');
+            document.getElementById('videoBtn').classList.add('hidden');
+            document.getElementById('screenBtn').classList.add('hidden');
+        }
+
         function initializePrivateRoomPeer() {
-            const peerId = ROOM_PREFIX + roomId;
+            const prefix = isAudioOnly ? AUDIO_ROOM_PREFIX : ROOM_PREFIX;
+            const peerId = prefix + roomId;
             
             peer = new Peer(peerId, {
                 config: {
@@ -1160,16 +1520,12 @@
                 myPeerId = id;
                 console.log('Room created/joined:', roomId);
                 
-                // Show share link button
                 document.getElementById('shareLinkBtn').classList.remove('hidden');
-                
-                // Hide next button in private rooms
                 document.getElementById('nextBtn').classList.add('hidden');
                 
                 updateStatus('Waiting for friend');
                 document.getElementById('waitingText').textContent = 'Waiting for friend to join';
                 
-                // Try to call the other peer if they're already waiting
                 tryConnectToRoom();
             });
 
@@ -1192,7 +1548,6 @@
                 console.error('Peer error:', error);
                 
                 if (error.type === 'unavailable-id') {
-                    // Room already exists, try to connect as second peer
                     console.log('Room exists, connecting as second peer...');
                     peer.destroy();
                     setTimeout(() => connectToExistingRoom(), 500);
@@ -1215,8 +1570,8 @@
         }
 
         function connectToExistingRoom() {
-            // Create peer with a modified ID to join as second person
-            const peerId = ROOM_PREFIX + roomId + '-guest';
+            const prefix = isAudioOnly ? AUDIO_ROOM_PREFIX : ROOM_PREFIX;
+            const peerId = prefix + roomId + '-guest';
             
             peer = new Peer(peerId, {
                 config: {
@@ -1234,8 +1589,8 @@
                 console.log('Connecting to existing room:', roomId);
                 updateStatus('Connecting');
                 
-                // Call the host
-                const hostPeerId = ROOM_PREFIX + roomId;
+                const hostPrefix = isAudioOnly ? AUDIO_ROOM_PREFIX : ROOM_PREFIX;
+                const hostPeerId = hostPrefix + roomId;
                 tryCallPeer(hostPeerId);
             });
 
@@ -1255,8 +1610,8 @@
         }
 
         function tryConnectToRoom() {
-            // Try to connect to guest if they're already there
-            const guestPeerId = ROOM_PREFIX + roomId + '-guest';
+            const prefix = isAudioOnly ? AUDIO_ROOM_PREFIX : ROOM_PREFIX;
+            const guestPeerId = prefix + roomId + '-guest';
             
             setTimeout(() => {
                 if (!isConnected) {
@@ -1287,7 +1642,8 @@
 
         function showShareLink() {
             const baseUrl = window.location.origin + window.location.pathname;
-            const shareUrl = `${baseUrl}?room=${roomId}`;
+            const mode = isAudioOnly ? '&mode=audio' : '';
+            const shareUrl = `${baseUrl}?room=${roomId}${mode}`;
             document.getElementById('shareLinkUrl').textContent = shareUrl;
             document.getElementById('shareLinkContainer').classList.add('visible');
         }
@@ -1298,7 +1654,8 @@
 
         function copyRoomLink() {
             const baseUrl = window.location.origin + window.location.pathname;
-            const shareUrl = `${baseUrl}?room=${roomId}`;
+            const mode = isAudioOnly ? '&mode=audio' : '';
+            const shareUrl = `${baseUrl}?room=${roomId}${mode}`;
             
             navigator.clipboard.writeText(shareUrl).then(() => {
                 const btn = document.getElementById('copyLinkBtn');
@@ -1313,7 +1670,8 @@
         }
 
         function initializePeer() {
-            const peerId = LOBBY_PREFIX + myLobbySlot;
+            const prefix = isAudioOnly ? AUDIO_LOBBY_PREFIX : LOBBY_PREFIX;
+            const peerId = prefix + myLobbySlot;
             
             peer = new Peer(peerId, {
                 config: {
@@ -1415,7 +1773,8 @@
                     return;
                 }
 
-                const targetPeerId = LOBBY_PREFIX + slotToTry;
+                const prefix = isAudioOnly ? AUDIO_LOBBY_PREFIX : LOBBY_PREFIX;
+                const targetPeerId = prefix + slotToTry;
 
                 try {
                     const call = peer.call(targetPeerId, localStream);
@@ -1497,11 +1856,26 @@
         }
 
         function displayRemoteStream(remoteStream) {
-            const remoteVideo = document.getElementById('remoteVideo');
-            remoteVideo.srcObject = remoteStream;
-            remoteVideo.classList.remove('hidden');
             document.getElementById('remotePlaceholder').classList.add('hidden');
-            document.getElementById('remoteLabel').classList.remove('hidden');
+            
+            if (isAudioOnly) {
+                // Show audio placeholder for remote user
+                document.getElementById('remoteAudioPlaceholder').classList.remove('hidden');
+                document.getElementById('remoteLabel').classList.remove('hidden');
+                
+                // Create hidden audio element to play remote audio
+                const remoteAudio = new Audio();
+                remoteAudio.srcObject = remoteStream;
+                remoteAudio.autoplay = true;
+                remoteAudio.id = 'remoteAudioElement';
+                document.body.appendChild(remoteAudio);
+            } else {
+                const remoteVideo = document.getElementById('remoteVideo');
+                remoteVideo.srcObject = remoteStream;
+                remoteVideo.classList.remove('hidden');
+                document.getElementById('remoteLabel').classList.remove('hidden');
+            }
+            
             updateStatus('Connected', true);
             
             if (!isPrivateRoom) {
@@ -1529,7 +1903,6 @@
             messages = [];
             document.getElementById('chatMessages').innerHTML = '';
 
-            // Stop screen sharing if active
             if (isScreenSharing) {
                 stopScreenShare();
             }
@@ -1537,7 +1910,6 @@
             resetRemoteVideo();
             
             if (isPrivateRoom) {
-                // In private rooms, just wait for reconnection
                 updateStatus('Waiting for friend');
                 document.getElementById('waitingText').textContent = 'Friend disconnected. Waiting...';
             } else if (peer && peer.open && !peer.destroyed) {
@@ -1549,7 +1921,7 @@
         }
 
         function nextPerson() {
-            if (isPrivateRoom) return; // No next in private rooms
+            if (isPrivateRoom) return;
             console.log('Next button clicked');
             handleDisconnect();
         }
@@ -1561,6 +1933,14 @@
             }
             remoteVideo.srcObject = null;
             remoteVideo.classList.add('hidden');
+            
+            // Remove remote audio element if exists
+            const remoteAudio = document.getElementById('remoteAudioElement');
+            if (remoteAudio) {
+                remoteAudio.remove();
+            }
+            
+            document.getElementById('remoteAudioPlaceholder').classList.add('hidden');
             document.getElementById('remotePlaceholder').classList.remove('hidden');
             document.getElementById('remoteLabel').classList.add('hidden');
             
@@ -1580,6 +1960,8 @@
         }
 
         async function startScreenShare() {
+            if (isAudioOnly) return;
+            
             try {
                 screenStream = await navigator.mediaDevices.getDisplayMedia({
                     video: {
@@ -1666,6 +2048,8 @@
         }
 
         function toggleVideo() {
+            if (isAudioOnly) return;
+            
             if (localStream && localStream.getVideoTracks().length > 0 && !isScreenSharing) {
                 isVideoEnabled = !isVideoEnabled;
                 localStream.getVideoTracks()[0].enabled = isVideoEnabled;
@@ -1762,11 +2146,18 @@
                 peer.destroy();
             }
 
+            // Remove remote audio element if exists
+            const remoteAudio = document.getElementById('remoteAudioElement');
+            if (remoteAudio) {
+                remoteAudio.remove();
+            }
+
             isConnected = false;
             isSearching = false;
             isPrivateRoom = false;
             roomId = null;
             messages = [];
+            isAudioOnly = false;
 
             document.getElementById('startScreen').classList.remove('hidden');
             document.getElementById('mainApp').classList.add('hidden');
@@ -1775,10 +2166,17 @@
             document.getElementById('chatMessages').innerHTML = '';
             document.getElementById('shareLinkBtn').classList.add('hidden');
             document.getElementById('nextBtn').classList.remove('hidden');
+            document.getElementById('videoBtn').classList.remove('hidden');
+            document.getElementById('screenBtn').classList.add('hidden');
+            
+            document.getElementById('localVideo').classList.remove('hidden');
+            document.getElementById('localAudioPlaceholder').classList.add('hidden');
+            document.getElementById('remoteAudioPlaceholder').classList.add('hidden');
+            document.getElementById('localLabel').classList.remove('hidden');
+            
             hidePrivateRoom();
             resetRemoteVideo();
             
-            // Clear URL parameters
             window.history.replaceState({}, document.title, window.location.pathname);
         }
 
@@ -1799,7 +2197,6 @@
             stopChat();
         });
 
-        // Check for room ID in URL on page load
         checkUrlForRoom();
     </script>
 </body>
