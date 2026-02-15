@@ -1,5 +1,5 @@
 # Glimpse - Random Video Chat Application
-
+<img src="https://raw.githubusercontent.com/aryansrao/glimpse/main/assets/glimpse-home.png" alt="Glimpse home page screenshot" width="120" height="120">
 A modern, peer-to-peer video chat platform that connects strangers worldwide through instant WebRTC video calls. Glimpse offers seamless random matching, real-time video/audio streaming, and text chat capabilities with a minimalistic glassmorphic design.
 
 **Live Demo:** [https://glimpse-vc.netlify.app/](https://glimpse-vc.netlify.app/)
