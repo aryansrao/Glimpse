@@ -1,0 +1,21 @@
+[package]
+name = "glimpse_desktop"
+version = "0.1.0"
+description = "Glimpse Desktop App"
+authors = ["aryansrao"]
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+
+[lib]
+name = "glimpse_desktop"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[profile.release]
+opt-level = "z"     # Optimize for size
+lto = true
+codegen-units = 1

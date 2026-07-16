@@ -1,0 +1,169 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ---------------------------------------------------------------- */
+/* Glimpse design tokens — "liquid glass" system                    */
+/* ---------------------------------------------------------------- */
+:root {
+  --void: #050505;
+  --void-soft: #0d0d0d;
+  --ink: #f5f5f5;
+  --mist: #a8a8a8;
+  --mist-dim: #6e6e6e;
+
+  /* Monochrome — legacy accent names repoint to neutral tones */
+  --violet: #e8e8e8;
+  --violet-soft: #f5f5f5;
+  --aqua: #d4d4d4;
+  --coral: #bdbdbd;
+
+  --glass-fill: rgba(255, 255, 255, 0.05);
+  --glass-fill-strong: rgba(255, 255, 255, 0.085);
+  --glass-highlight: rgba(255, 255, 255, 0.12);
+  --glass-shadow: rgba(0, 0, 0, 0.6);
+
+  --radius-glass: 28px;
+  --radius-glass-lg: 40px;
+  --radius-pill: 999px;
+}
+
+@theme inline {
+  --color-void: var(--void);
+  --color-void-soft: var(--void-soft);
+  --color-ink: var(--ink);
+  --color-mist: var(--mist);
+  --color-mist-dim: var(--mist-dim);
+  --color-violet: var(--violet);
+  --color-violet-soft: var(--violet-soft);
+  --color-aqua: var(--aqua);
+  --color-coral: var(--coral);
+
+  --font-display: "Satoshi", system-ui, sans-serif;
+  --font-sans: "Satoshi", system-ui, sans-serif;
+  /* Wordmark only — the logo gets its own face. */
+  --font-logo: "Chillax", "Satoshi", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+
+  --radius-glass: 28px;
+  --radius-glass-lg: 40px;
+  --radius-pill: 999px;
+
+  --animate-drift: drift 22s ease-in-out infinite;
+  --animate-drift-slow: drift 34s ease-in-out infinite reverse;
+  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-shimmer: shimmer 2.6s linear infinite;
+}
+
+* {
+  border-color: transparent;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--void);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  min-height: 100dvh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+}
+
+/* Liquid glass surface — layered blur, inner light, top specular highlight */
+.glass {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    var(--glass-fill) 45%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  backdrop-filter: blur(28px) saturate(160%) brightness(1.08);
+  -webkit-backdrop-filter: blur(28px) saturate(160%) brightness(1.08);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+    inset 1px 1px 0 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 -12px 24px -18px rgba(255, 255, 255, 0.06),
+    0 24px 60px -24px var(--glass-shadow),
+    0 2px 10px -4px rgba(0, 0, 0, 0.4);
+}
+
+.glass-strong {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    var(--glass-fill-strong) 45%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  backdrop-filter: blur(38px) saturate(180%) brightness(1.12);
+  -webkit-backdrop-filter: blur(38px) saturate(180%) brightness(1.12);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+    inset 1px 1px 0 0 rgba(255, 255, 255, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 -14px 28px -20px rgba(255, 255, 255, 0.08),
+    0 28px 70px -22px var(--glass-shadow),
+    0 2px 12px -4px rgba(0, 0, 0, 0.45);
+}
+
+.text-gradient {
+  background: linear-gradient(180deg, #ffffff 0%, #c9c9c9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+::selection {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--void);
+}
+
+/* Scrollbar — thin, glassy */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-pill);
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  33% { transform: translate(3%, -4%) scale(1.06) rotate(6deg); }
+  66% { transform: translate(-4%, 3%) scale(0.96) rotate(-5deg); }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); }
+  100% { box-shadow: 0 0 0 18px rgba(255, 255, 255, 0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* visible keyboard focus, glassy ring */
+:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 3px;
+  border-radius: 8px;
+}

@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1783872445304,
+      "tag": "0000_lowly_leo",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1783888298179,
+      "tag": "0001_ambiguous_deathstrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1783890449449,
+      "tag": "0002_motionless_jubilee",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1783940167682,
+      "tag": "0003_flippant_runaways",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1783940825206,
+      "tag": "0004_careless_colossus",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1783941413044,
+      "tag": "0005_short_silver_surfer",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1783959082381,
+      "tag": "0006_keen_hemingway",
+      "breakpoints": true
+    }
+  ]
+}
