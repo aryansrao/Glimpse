@@ -6,10 +6,10 @@ import GitHub from "next-auth/providers/github";
 import { decode } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import { compare } from "bcryptjs";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { users, emailOtps } from "@/db/schema";
 
 /**
  * The user id of the ALREADY signed-in session during an OAuth callback,
@@ -38,8 +38,74 @@ const providers: Provider[] = [
     credentials: {
       username: { label: "Username" },
       password: { label: "Password", type: "password" },
+      email: { label: "Email" },
+      otp: { label: "OTP" },
     },
     async authorize(credentials) {
+      // 1. Check if this is an OTP login
+      const email = typeof credentials?.email === "string" ? credentials.email.trim().toLowerCase() : null;
+      const otp = typeof credentials?.otp === "string" ? credentials.otp.trim() : null;
+
+      if (email && otp) {
+        // OTP Login / Passwordless magic link verification
+        const [user] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email));
+
+        if (!user) {
+          // If no user exists, verify OTP first and auto-register them
+          const [otpRecord] = await db
+            .select()
+            .from(emailOtps)
+            .where(eq(emailOtps.email, email))
+            .orderBy(desc(emailOtps.createdAt))
+            .limit(1);
+
+          if (!otpRecord) return null;
+          if (otpRecord.expiresAt.getTime() < Date.now()) {
+            await db.delete(emailOtps).where(eq(emailOtps.id, otpRecord.id));
+            return null;
+          }
+          if (!(await compare(otp, otpRecord.codeHash))) return null;
+
+          const id = nanoid();
+          const handle = `${email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "")}${nanoid(4)}`;
+          const name = email.split("@")[0];
+
+          await db.insert(users).values({
+            id,
+            email,
+            emailVerified: true,
+            name,
+            handle,
+          });
+          await db.delete(emailOtps).where(eq(emailOtps.id, otpRecord.id));
+          return { id, name, email };
+        }
+
+        // Existing user OTP verification
+        const [otpRecord] = await db
+          .select()
+          .from(emailOtps)
+          .where(eq(emailOtps.email, email))
+          .orderBy(desc(emailOtps.createdAt))
+          .limit(1);
+
+        if (!otpRecord) return null;
+        if (otpRecord.expiresAt.getTime() < Date.now()) {
+          await db.delete(emailOtps).where(eq(emailOtps.id, otpRecord.id));
+          return null;
+        }
+        if (!(await compare(otp, otpRecord.codeHash))) return null;
+
+        await db.update(users).set({ emailVerified: true }).where(eq(users.id, user.id));
+        await db.delete(emailOtps).where(eq(emailOtps.id, otpRecord.id));
+
+        return { id: user.id, name: user.name, email: user.email };
+      }
+
+      // 2. Otherwise, treat as Username + Password login
       const username = String(credentials?.username ?? "")
         .trim()
         .toLowerCase();
@@ -50,10 +116,14 @@ const providers: Provider[] = [
         .select()
         .from(users)
         .where(eq(users.handle, username));
-      // Same generic failure for unknown user and wrong password — no
-      // account enumeration.
+      
       if (!user?.passwordHash) return null;
       if (!(await compare(password, user.passwordHash))) return null;
+
+      // Enforce email verification for password accounts
+      if (!user.emailVerified) {
+        throw new Error("EmailNotVerified");
+      }
 
       return { id: user.id, name: user.name, email: user.email };
     },

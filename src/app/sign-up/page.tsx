@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { Navbar } from "@/components/home/navbar";
 import { GlassCard } from "@/components/glass/glass-card";
 import { GlimpseOrb } from "@/components/glass/glimpse-orb";
@@ -35,17 +34,7 @@ export default function SignUpPage() {
         setError(data?.error ?? "Something went wrong. Try again.");
         return;
       }
-      const result = await signIn("credentials", {
-        username,
-        password,
-        redirect: false,
-      });
-      if (result?.error) {
-        router.push("/sign-in");
-        return;
-      }
-      router.push("/");
-      router.refresh();
+      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
     } finally {
       setBusy(false);
     }
@@ -61,7 +50,7 @@ export default function SignUpPage() {
             Create your account
           </h1>
           <p className="mt-2 text-sm text-mist">
-            Pick a username and password. Email is optional.
+            Fill in your details. A verification code will be sent to your email.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
@@ -87,7 +76,7 @@ export default function SignUpPage() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="email">Email (optional)</Label>
+              <Label htmlFor="email">Email address</Label>
               <Input
                 id="email"
                 type="email"
@@ -95,6 +84,7 @@ export default function SignUpPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 autoComplete="email"
+                required
               />
             </div>
             <div className="flex flex-col gap-1.5">

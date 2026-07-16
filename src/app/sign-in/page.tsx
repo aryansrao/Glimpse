@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Navbar } from "@/components/home/navbar";
 import { GlimpseOrb } from "@/components/glass/glimpse-orb";
@@ -27,16 +27,47 @@ function GithubIcon() {
   );
 }
 
-export default function SignInPage() {
+function SignInForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const verifiedParam = searchParams.get("verified");
+  const resetParam = searchParams.get("reset");
+  const emailParam = searchParams.get("email");
+
+  const [activeTab, setActiveTab] = useState<"password" | "otp">("password");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  
+  const [email, setEmail] = useState(emailParam ?? "");
+  const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
+  const [otpSent, setOtpSent] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  const [error, setError] = useState<string | null>(
+    verifiedParam ? null : resetParam ? null : null
+  );
+  const [success, setSuccess] = useState<string | null>(
+    verifiedParam
+      ? "Email verified successfully! You can now sign in."
+      : resetParam
+      ? "Password reset successfully! Please sign in."
+      : null
+  );
   const [busy, setBusy] = useState(false);
+
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldown]);
 
   async function handleCredentials(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
     setBusy(true);
     try {
       const result = await signIn("credentials", {
@@ -44,7 +75,23 @@ export default function SignInPage() {
         password,
         redirect: false,
       });
+
       if (result?.error) {
+        // Check if the user is unverified by calling our verification-check helper
+        try {
+          const checkRes = await fetch(`/api/auth/verify-needed?username=${encodeURIComponent(username)}`);
+          if (checkRes.ok) {
+            const checkData = await checkRes.json();
+            if (!checkData.verified) {
+              setError("Your email is not verified yet. Redirecting to verification...");
+              setTimeout(() => {
+                router.push(`/verify-email?email=${encodeURIComponent(checkData.email)}`);
+              }, 2000);
+              return;
+            }
+          }
+        } catch {}
+
         setError("Wrong username or password.");
         return;
       }
@@ -52,6 +99,94 @@ export default function SignInPage() {
       router.refresh();
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handleSendOtp() {
+    if (!email || !email.includes("@")) {
+      setError("Enter a valid email address.");
+      return;
+    }
+    setError(null);
+    setSuccess(null);
+    setBusy(true);
+    try {
+      const res = await fetch("/api/auth/otp/send-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        setError(data?.error ?? "Failed to send code.");
+        return;
+      }
+
+      setOtpSent(true);
+      setSuccess("We sent a 6-digit sign-in code to your email.");
+      setCooldown(60);
+    } catch {
+      setError("An error occurred. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleOtpSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const code = otp.join("");
+    if (code.length < 6) {
+      setError("Enter the complete 6-digit code.");
+      return;
+    }
+
+    setError(null);
+    setSuccess(null);
+    setBusy(true);
+    try {
+      const result = await signIn("credentials", {
+        email,
+        otp: code,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Invalid or expired code. Please try again.");
+        return;
+      }
+      router.push("/");
+      router.refresh();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function handleOtpChange(value: string, index: number) {
+    if (isNaN(Number(value))) return;
+
+    const newOtp = [...otp];
+    newOtp[index] = value.substring(value.length - 1);
+    setOtp(newOtp);
+
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  }
+
+  function handleOtpKeyDown(e: React.KeyboardEvent<HTMLInputElement>, index: number) {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  }
+
+  function handleOtpPaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text").trim();
+    if (pasteData.length === 6 && /^\d+$/.test(pasteData)) {
+      const pasteOtp = pasteData.split("");
+      setOtp(pasteOtp);
+      inputRefs.current[5]?.focus();
     }
   }
 
@@ -63,37 +198,153 @@ export default function SignInPage() {
         <GlassCard strong className="w-full max-w-sm p-8">
           <h1 className="mb-1 font-display text-2xl font-medium">Welcome back</h1>
           <p className="mb-6 text-sm text-mist">
-            Sign in to save your profile, join private rooms, and connect with people
-            who share your interests.
+            Sign in to save your profile, join private rooms, and connect with other users.
           </p>
 
-          <form onSubmit={handleCredentials} className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                autoComplete="username"
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-                required
-              />
-            </div>
-            {error ? <p className="text-sm text-mist">{error}</p> : null}
-            <Button type="submit" disabled={busy} className="mt-1 w-full">
-              {busy ? "Signing in..." : "Sign in"}
-            </Button>
-          </form>
+          {/* Liquid glass styled Tab headers */}
+          <div className="mb-6 flex gap-1 p-1 bg-white/5 border border-white/10 rounded-xl">
+            <button
+              onClick={() => {
+                setActiveTab("password");
+                setError(null);
+                setSuccess(null);
+              }}
+              className={`flex-1 py-1.5 text-sm font-medium rounded-lg transition-all ${
+                activeTab === "password"
+                  ? "bg-white/10 text-ink border border-white/10 shadow-sm"
+                  : "text-mist-dim hover:text-mist"
+              }`}
+            >
+              Password
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("otp");
+                setError(null);
+                setSuccess(null);
+              }}
+              className={`flex-1 py-1.5 text-sm font-medium rounded-lg transition-all ${
+                activeTab === "otp"
+                  ? "bg-white/10 text-ink border border-white/10 shadow-sm"
+                  : "text-mist-dim hover:text-mist"
+              }`}
+            >
+              Email OTP
+            </button>
+          </div>
+
+          {activeTab === "password" ? (
+            <form onSubmit={handleCredentials} className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="username"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs text-mist underline underline-offset-4 hover:text-ink"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                  required
+                />
+              </div>
+              {error ? <p className="text-sm text-mist">{error}</p> : null}
+              {success ? <p className="text-sm text-emerald-400">{success}</p> : null}
+              <Button type="submit" disabled={busy} className="mt-1 w-full">
+                {busy ? "Signing in..." : "Sign in"}
+              </Button>
+            </form>
+          ) : (
+            <form onSubmit={handleOtpSubmit} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="email">Email address</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    required
+                    disabled={otpSent}
+                  />
+                  {!otpSent && (
+                    <Button
+                      type="button"
+                      onClick={handleSendOtp}
+                      disabled={busy || !email}
+                      className="whitespace-nowrap px-4"
+                    >
+                      Send Code
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {otpSent && (
+                <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className="flex flex-col gap-1.5 items-center">
+                    <Label className="self-start">Sign-in Code</Label>
+                    <div className="flex justify-center gap-2" onPaste={handleOtpPaste}>
+                      {otp.map((digit, idx) => (
+                        <input
+                          key={idx}
+                          ref={(el) => {
+                            inputRefs.current[idx] = el;
+                          }}
+                          type="text"
+                          inputMode="numeric"
+                          pattern="\d*"
+                          maxLength={1}
+                          value={digit}
+                          onChange={(e) => handleOtpChange(e.target.value, idx)}
+                          onKeyDown={(e) => handleOtpKeyDown(e, idx)}
+                          className="w-10 h-12 text-center text-xl font-semibold bg-white/5 border border-white/10 rounded-xl focus:border-white/30 focus:bg-white/10 focus:ring-1 focus:ring-white/20 transition-all outline-none text-ink"
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <Button type="submit" disabled={busy || otp.some((d) => !d)} className="w-full">
+                    {busy ? "Signing in..." : "Confirm Sign-in"}
+                  </Button>
+
+                  <div className="text-center text-xs">
+                    <button
+                      type="button"
+                      onClick={handleSendOtp}
+                      disabled={cooldown > 0}
+                      className={`underline underline-offset-4 ${
+                        cooldown > 0 ? "text-mist-dim cursor-not-allowed" : "text-ink hover:text-mist"
+                      }`}
+                    >
+                      {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {error ? <p className="text-sm text-mist text-center">{error}</p> : null}
+              {success ? <p className="text-sm text-emerald-400 text-center">{success}</p> : null}
+            </form>
+          )}
 
           <p className="mt-4 text-center text-sm text-mist-dim">
             New here?{" "}
@@ -135,5 +386,23 @@ export default function SignInPage() {
         </GlassCard>
       </main>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-dvh flex-col">
+        <Navbar />
+        <main className="relative flex flex-1 items-center justify-center px-6 py-10">
+          <GlimpseOrb className="-z-10" />
+          <GlassCard strong className="w-full max-w-sm p-8 flex items-center justify-center">
+            <div className="animate-pulse text-mist">Loading sign in...</div>
+          </GlassCard>
+        </main>
+      </div>
+    }>
+      <SignInForm />
+    </Suspense>
   );
 }

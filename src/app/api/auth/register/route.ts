@@ -6,6 +6,12 @@ import { z } from "zod";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 
+import { randomInt } from "node:crypto";
+import { sendOtpEmail } from "@/lib/mailer";
+import { emailOtps } from "@/db/schema";
+
+const OTP_TTL_MS = 10 * 60 * 1000;
+
 const registerSchema = z.object({
   username: z
     .string()
@@ -17,7 +23,7 @@ const registerSchema = z.object({
     ),
   name: z.string().trim().min(1).max(50),
   password: z.string().min(8, "Password must be at least 8 characters").max(128),
-  email: z.string().trim().toLowerCase().email().optional().or(z.literal("")),
+  email: z.string().trim().toLowerCase().email("Enter a valid email address."),
 });
 
 export async function POST(request: Request) {
@@ -36,8 +42,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { username, name, password } = parsed.data;
-  const email = parsed.data.email || `${username}@accounts.glimpse`;
+  const { username, name, password, email } = parsed.data;
 
   const [existing] = await db
     .select({ id: users.id })
@@ -50,9 +55,12 @@ export async function POST(request: Request) {
     );
   }
 
+  const userId = nanoid();
   const passwordHash = await hash(password, 12);
+
+  // 1. Create the user with emailVerified = false
   await db.insert(users).values({
-    id: nanoid(),
+    id: userId,
     email,
     emailVerified: false,
     name,
@@ -60,5 +68,30 @@ export async function POST(request: Request) {
     passwordHash,
   });
 
-  return NextResponse.json({ ok: true }, { status: 201 });
+  // 2. Generate, hash, and store the OTP
+  const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
+  const codeHash = await hash(code, 10);
+
+  await db.insert(emailOtps).values({
+    id: nanoid(),
+    userId,
+    email,
+    codeHash,
+    attempts: 0,
+    expiresAt: new Date(Date.now() + OTP_TTL_MS),
+  });
+
+  try {
+    await sendOtpEmail(email, code);
+  } catch {
+    // If mail sending fails, delete the created user and OTP to allow retry
+    await db.delete(users).where(eq(users.id, userId));
+    await db.delete(emailOtps).where(eq(emailOtps.userId, userId));
+    return NextResponse.json(
+      { error: "Failed to send verification email. Please check your email address and try again." },
+      { status: 502 }
+    );
+  }
+
+  return NextResponse.json({ ok: true, email }, { status: 201 });
 }

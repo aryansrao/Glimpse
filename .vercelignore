@@ -1,0 +1,22 @@
+# Ignore Tauri desktop folder
+desktop/
+
+# Ignore node modules and build outputs
+node_modules/
+.next/
+out/
+build/
+.vercel/
+
+# Ignore local databases and configurations
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+.env*
+.claude/
+CLAUDE.md
+AGENTS.md
+task.md
+walkthrough.md
+implementation_plan.md

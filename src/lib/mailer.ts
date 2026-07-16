@@ -38,12 +38,72 @@ function buildOtpMessage(to: string, code: string, from: string): OtpMessage {
       "It expires in 10 minutes. If you didn't request this, you can ignore this email.",
     ].join("\n"),
     html: `
-      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0c;color:#f4f4f5;padding:40px 24px;border-radius:16px;max-width:480px;margin:0 auto;">
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0c;color:#f4f4f5;padding:40px 24px;border-radius:16px;max-width:480px;margin:0 auto;border:1px solid rgba(255,255,255,0.05);">
         <p style="margin:0 0 8px;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;">Glimpse</p>
         <h1 style="margin:0 0 24px;font-size:20px;font-weight:500;">Verify your email</h1>
-        <p style="margin:0 0 16px;font-size:14px;color:#d4d4d8;">Enter this code on your profile page:</p>
+        <p style="margin:0 0 16px;font-size:14px;color:#d4d4d8;">Enter this code to verify your account registration:</p>
         <p style="margin:0 0 24px;font-size:34px;font-weight:600;letter-spacing:0.3em;color:#ffffff;">${code}</p>
         <p style="margin:0;font-size:12px;color:#9ca3af;">This code expires in 10 minutes. If you didn't request it, you can safely ignore this email.</p>
+      </div>
+    `,
+  };
+}
+
+function buildLoginOtpMessage(to: string, code: string, from: string): OtpMessage {
+  return {
+    to,
+    from: from.includes("<") ? from : `Glimpse <${from}>`,
+    subject: `${code} is your Glimpse sign-in code`,
+    text: [
+      `Your Glimpse sign-in code is: ${code}`,
+      "",
+      "It expires in 10 minutes. If you didn't request this, you can ignore this email.",
+    ].join("\n"),
+    html: `
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0c;color:#f4f4f5;padding:40px 24px;border-radius:16px;max-width:480px;margin:0 auto;border:1px solid rgba(255,255,255,0.05);">
+        <p style="margin:0 0 8px;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;">Glimpse</p>
+        <h1 style="margin:0 0 24px;font-size:20px;font-weight:500;">Sign in to Glimpse</h1>
+        <p style="margin:0 0 16px;font-size:14px;color:#d4d4d8;">Enter this code on the sign-in page to log in:</p>
+        <p style="margin:0 0 24px;font-size:34px;font-weight:600;letter-spacing:0.3em;color:#ffffff;">${code}</p>
+        <p style="margin:0;font-size:12px;color:#9ca3af;">This code expires in 10 minutes. If you didn't request it, you can safely ignore this email.</p>
+      </div>
+    `,
+  };
+}
+
+function buildResetOtpMessage(to: string, code: string, from: string): OtpMessage {
+  return {
+    to,
+    from: from.includes("<") ? from : `Glimpse <${from}>`,
+    subject: `${code} is your Glimpse password reset code`,
+    text: [
+      `Your Glimpse password reset code is: ${code}`,
+      "",
+      "It expires in 10 minutes. If you didn't request this, you can ignore this email.",
+    ].join("\n"),
+    html: `
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0c;color:#f4f4f5;padding:40px 24px;border-radius:16px;max-width:480px;margin:0 auto;border:1px solid rgba(255,255,255,0.05);">
+        <p style="margin:0 0 8px;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;">Glimpse</p>
+        <h1 style="margin:0 0 24px;font-size:20px;font-weight:500;">Reset your password</h1>
+        <p style="margin:0 0 16px;font-size:14px;color:#d4d4d8;">Enter this code on the reset password page:</p>
+        <p style="margin:0 0 24px;font-size:34px;font-weight:600;letter-spacing:0.3em;color:#ffffff;">${code}</p>
+        <p style="margin:0;font-size:12px;color:#9ca3af;">This code expires in 10 minutes. If you didn't request it, you can safely ignore this email.</p>
+      </div>
+    `,
+  };
+}
+
+function buildKeepAliveMessage(to: string, from: string): OtpMessage {
+  return {
+    to,
+    from: from.includes("<") ? from : `Glimpse <${from}>`,
+    subject: `Glimpse / Brevo Keep-Alive Ping`,
+    text: `This is an automated keep-alive ping sent to prevent Brevo API/SMTP inactivity suspension (90-day inactivity limit).`,
+    html: `
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0c;color:#f4f4f5;padding:40px 24px;border-radius:16px;max-width:480px;margin:0 auto;border:1px solid rgba(255,255,255,0.05);">
+        <p style="margin:0 0 8px;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#9ca3af;">Glimpse</p>
+        <h1 style="margin:0 0 16px;font-size:20px;font-weight:500;">Brevo Keep-Alive Ping</h1>
+        <p style="margin:0;font-size:14px;color:#d4d4d8;">This monthly automated email keeps your Brevo integration active.</p>
       </div>
     `,
   };
@@ -75,7 +135,6 @@ async function sendViaSmtp(message: OtpMessage): Promise<void> {
   const transport = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port,
-    // Port 465 is implicit TLS; 587/25 use STARTTLS.
     secure: port === 465,
     auth:
       process.env.SMTP_USER && process.env.SMTP_PASS
@@ -85,18 +144,34 @@ async function sendViaSmtp(message: OtpMessage): Promise<void> {
   await transport.sendMail(message);
 }
 
-export async function sendOtpEmail(to: string, code: string): Promise<void> {
+async function sendEmailGeneric(to: string, messageBuilder: (to: string, from: string) => OtpMessage): Promise<void> {
   if (process.env.RESEND_API_KEY) {
     const from = process.env.RESEND_FROM || "Glimpse <onboarding@resend.dev>";
-    await sendViaResend(buildOtpMessage(to, code, from));
+    await sendViaResend(messageBuilder(to, from));
     return;
   }
   if (process.env.SMTP_HOST) {
     const from = process.env.SMTP_FROM || process.env.SMTP_USER || "glimpse@localhost";
-    await sendViaSmtp(buildOtpMessage(to, code, from));
+    await sendViaSmtp(messageBuilder(to, from));
     return;
   }
   throw new Error(
     "Email is not configured — set RESEND_API_KEY (Resend) or SMTP_HOST/SMTP_PORT/SMTP_USER/SMTP_PASS/SMTP_FROM in your environment."
   );
+}
+
+export async function sendOtpEmail(to: string, code: string): Promise<void> {
+  await sendEmailGeneric(to, (t, f) => buildOtpMessage(t, code, f));
+}
+
+export async function sendLoginOtpEmail(to: string, code: string): Promise<void> {
+  await sendEmailGeneric(to, (t, f) => buildLoginOtpMessage(t, code, f));
+}
+
+export async function sendResetOtpEmail(to: string, code: string): Promise<void> {
+  await sendEmailGeneric(to, (t, f) => buildResetOtpMessage(t, code, f));
+}
+
+export async function sendKeepAliveEmail(to: string): Promise<void> {
+  await sendEmailGeneric(to, (t, f) => buildKeepAliveMessage(t, f));
 }
